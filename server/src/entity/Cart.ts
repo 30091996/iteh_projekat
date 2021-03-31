@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import Order from "./Order";
 import { User } from "./User";
 
@@ -14,6 +14,8 @@ export default class Cart {
     @ManyToOne(type => User, { eager: true })
     user: User
 
+    @Column()
+    executed: boolean
 
     @OneToMany(type => Order, o => o.cart, { eager: false })
     items: Order[]
