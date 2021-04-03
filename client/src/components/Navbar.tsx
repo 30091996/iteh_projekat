@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Menu } from 'semantic-ui-react'
+import axios from 'axios';
+import { SERVER_URL } from '../constants';
 interface Props {
     full: boolean,
     admin?: boolean,
@@ -10,11 +12,11 @@ export default function Navbar(props: Props) {
 
     return (
 
-        <Menu borderless fluid>
+        <Menu inverted color='purple' borderless fluid>
             {
                 props.full ? (
                     <>
-                        <Menu.Item as={Link} to='/'>Home</Menu.Item>
+                        <Menu.Item as={Link} color='yellow' to='/'>Home</Menu.Item>
                         <Menu.Item as={Link} to='/products'>Products</Menu.Item>
                         {
                             props.admin && (
@@ -23,7 +25,10 @@ export default function Navbar(props: Props) {
                         }
                         <Menu.Menu position='right'>
                             <Menu.Item icon='cart' title='cart' as={Link} to='/cart' />
-                            <Menu.Item onClick={props.logout}>logout</Menu.Item>
+                            <Menu.Item onClick={async () => {
+                                const res = await axios.post(SERVER_URL + '/logout');
+                                props.logout();
+                            }}>logout</Menu.Item>
                         </Menu.Menu>
                     </>
                 ) : (

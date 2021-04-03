@@ -12,6 +12,8 @@ import Cart from './pages/Cart';
 import { Product, User } from './model';
 import Loading from './components/Loading';
 import axios from 'axios'
+import { SERVER_URL } from './constants';
+axios.defaults.withCredentials = true;
 function App() {
 
   const [user, setUser] = useState<User | undefined>(undefined);
@@ -20,6 +22,18 @@ function App() {
 
   useEffect(() => {
     (async function () {
+      try {
+        const resUser = await axios.post(SERVER_URL + '/check', {
+
+        }, { withCredentials: true });
+        setUser(resUser.data);
+        const resProduct = await axios.get(SERVER_URL + '/product')
+        setProducts(resProduct.data);
+
+      } catch (error) {
+        console.log(error.response);
+      }
+
 
     })().then(val => {
       setLoading(false);
@@ -64,7 +78,7 @@ function App() {
         <Route path='/products'>
           {
             user ? (
-              <Products />
+              <Products products={products} />
             ) : (
               <Login setUser={setUser} />
             )

@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
 import { Container, Form } from 'semantic-ui-react'
 import axios from 'axios'
+
 import { SERVER_URL } from '../constants';
 import { User } from '../model';
+
+
+axios.defaults.withCredentials = true;
 interface Props {
     setUser: (user: User) => void
 }
@@ -24,8 +28,8 @@ export default function Register(props: Props) {
             const result = await axios.post(SERVER_URL + '/register', {
                 username: username,
                 password: password,
-                firstname: firstname,
-                lastname: lastname
+                firstName: firstname,
+                lastName: lastname
             })
             props.setUser(result.data);
         } catch (error) {

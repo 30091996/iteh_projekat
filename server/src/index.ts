@@ -1,19 +1,39 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import * as express from "express";
-import * as bodyParser from "body-parser";
+import * as session from 'express-session'
 import { Request, Response } from "express";
 import { Routes } from "./routes";
-import { User } from "./entity/User";
 import * as cors from 'cors'
+import * as https from 'https'
+import * as fs from 'fs'
 
 createConnection().then(async connection => {
-
+    const key = fs.readFileSync('./key.pem', 'utf8');
+    const cert = fs.readFileSync('./cert.pem', 'utf8');
     // create express app
     const app = express();
-    app.use(cors())
-    app.use(express.json());
+    app.use(cors({
+        credentials: true,//protiv xss napada
 
+        methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+        origin: 'http://localhost:3000'
+
+    }));
+    app.use(express.json());
+    app.use(session({
+        secret: 'adsfgdhtydafsjtiuyi',
+        resave: false,
+
+        saveUninitialized: false,
+        cookie: {
+            sameSite: 'none',
+            secure: true,
+            maxAge: 1000 * 60 * 10,//10min
+            httpOnly: true,
+        }
+
+    }))
     // register express routes from defined application routes
     Routes.forEach(route => {
         app[route.method](route.route, (req: Request, res: Response) => {
@@ -25,10 +45,14 @@ createConnection().then(async connection => {
     // ...
 
     // start express server
-    app.listen(4000);
+
+    const server = https.createServer({
+        key: key,
+        cert: cert,
+    }, app)
+    server.listen(process.env.PORT || 4000, () => console.log('app is listening'))
 
 
 
-    console.log("Express server has started on port 3000. Open http://localhost:3000/users to see results");
 
 }).catch(error => console.log(error));

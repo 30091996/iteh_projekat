@@ -4,6 +4,8 @@ import { Button, Container, Form } from 'semantic-ui-react'
 import { User } from '../model'
 import axios from 'axios';
 import { SERVER_URL } from '../constants';
+
+axios.defaults.withCredentials = true;
 interface Props {
     setUser: (user: User) => void
 }
