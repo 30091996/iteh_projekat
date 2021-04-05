@@ -18,7 +18,7 @@ export class Product {
     @Column()
     price: number;
 
-    @ManyToOne(type => ProductCategory, { eager: false })
+    @ManyToOne(type => ProductCategory, { eager: true })
     productCategory: ProductCategory
 
 

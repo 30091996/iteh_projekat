@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Menu } from 'semantic-ui-react'
+import { Icon, Menu } from 'semantic-ui-react'
 import axios from 'axios';
 import { SERVER_URL } from '../constants';
 interface Props {
@@ -24,6 +24,7 @@ export default function Navbar(props: Props) {
                             )
                         }
                         <Menu.Menu position='right'>
+
                             <Menu.Item icon='cart' title='cart' as={Link} to='/cart' />
                             <Menu.Item onClick={async () => {
                                 const res = await axios.post(SERVER_URL + '/logout');

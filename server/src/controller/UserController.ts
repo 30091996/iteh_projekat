@@ -10,7 +10,7 @@ export class UserController implements GenericController {
 
     async check(request: Request, response: Response, next: NextFunction) {
         const user = (request.session as any).user as User | undefined;
-        console.log(request.session);
+
         if (!user) {
             response.sendStatus(400);
             return;
@@ -57,8 +57,7 @@ export class UserController implements GenericController {
         }
         (request.session as any).user = user;
         request.session.save((err) => {
-            console.log('user');
-            console.log((request.session as any).user)
+
             if (err)
                 response.sendStatus(500);
         });

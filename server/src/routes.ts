@@ -1,4 +1,6 @@
+import CartController from "./controller/CartController";
 import { GenericController } from "./controller/GenericController";
+import ProductCategoryController from "./controller/ProductCategoryController";
 import ProductController from "./controller/ProductController";
 import UserController from "./controller/UserController";
 export interface Route {
@@ -33,6 +35,30 @@ export const Routes: Route[] = [{
     controller: ProductController,
     method: 'get',
     route: '/product'
+},
+{
+    action: 'update',
+    controller: ProductController,
+    method: 'patch',
+    route: '/product/:id'
+},
+{
+    action: 'all',
+    controller: ProductCategoryController,
+    method: 'get',
+    route: '/category'
+},
+{
+    action: 'create',
+    controller: CartController,
+    method: 'post',
+    route: '/cart'
+},
+{
+    action: 'all',
+    controller: CartController,
+    method: 'get',
+    route: '/cart'
 }
 
 ];

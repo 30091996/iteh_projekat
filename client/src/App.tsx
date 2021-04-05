@@ -9,7 +9,7 @@ import ProductPage from './pages/Product';
 import Products from './pages/Products';
 import Admin from './pages/Admin';
 import Cart from './pages/Cart';
-import { Product, User } from './model';
+import { Order, Product, ProductCategory, User } from './model';
 import Loading from './components/Loading';
 import axios from 'axios'
 import { SERVER_URL } from './constants';
@@ -19,7 +19,71 @@ function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [items, setItems] = useState<Order[]>([])
+  const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const getProduct = (id: number) => {
+    return products.find(element => element.id === id);
+  }
+  const addOrder = (product: Product, ammount = 1) => {
+    setItems(prev => {
+      if (prev.find(element => element.product === product)) {
+        return prev.map(element => {
+          if (element.product !== product) {
+            return element;
+          }
+          return { ...element, ammount: element.ammount + ammount };
+        })
+      } else {
+        return [...prev, { product, ammount }]
+      }
+    })
+  }
+  const deleteOrder = (order: Order) => {
+    setItems(prev => {
+      return prev.filter(element => element !== order);
+    })
+  }
+  const updateOrder = (order: Order, ammount: number) => {
+    setItems(prev => {
+      return prev.map(element => {
+        if (element === order) {
+          return { ...element, ammount: ammount }
+        }
+        return element;
+      })
+    })
+  }
+  const orderUp = async (phone: string, adress: string) => {
+    const cart = {
+      phone: phone,
+      adress: adress,
+      items: items
+    };
+    await axios.post(SERVER_URL + '/cart', cart);
+    setItems([]);
+  }
+  const updateProduct = async (id: number, name: string, price: number, category: number, description: string) => {
+    await axios.patch(SERVER_URL + '/product/' + id, {
+      name: name,
+      price: price,
+      description: description,
+      productCategory: category
+    });
+    setProducts(prev => {
+      return prev.map(element => {
+        if (element.id === id) {
+          return { ...element, name, price, description, productCategory: categories.find(elem => elem.id === category)! }
+        }
+        return element;
+      })
+    })
+  }
+  const createProduct = async (data: FormData) => {
+    const res = await axios.post(SERVER_URL + '/product', data);
+    setProducts(prev => {
+      return [...prev, res.data];
+    })
+  }
   useEffect(() => {
     (async function () {
       try {
@@ -27,8 +91,16 @@ function App() {
 
         }, { withCredentials: true });
         setUser(resUser.data);
+      } catch (error) {
+
+      }
+      try {
+
         const resProduct = await axios.get(SERVER_URL + '/product')
         setProducts(resProduct.data);
+
+        const resCat = await axios.get(SERVER_URL + '/category');
+        setCategories(resCat.data);
 
       } catch (error) {
         console.log(error.response);
@@ -68,7 +140,7 @@ function App() {
         <Route path='/products/:id'>
           {
             user ? (
-              <ProductPage />
+              <ProductPage getProduct={getProduct} addOrder={addOrder} />
             ) : (
               <Login setUser={setUser} />
             )
@@ -78,7 +150,7 @@ function App() {
         <Route path='/products'>
           {
             user ? (
-              <Products products={products} />
+              <Products products={products} addOrder={addOrder} categories={categories} />
             ) : (
               <Login setUser={setUser} />
             )
@@ -87,7 +159,7 @@ function App() {
         <Route path='/admin'>
           {
             user ? (
-              <Admin />
+              <Admin products={products} createProduct={createProduct} updateProduct={updateProduct} categories={categories} />
             ) : (
               <Login setUser={setUser} />
             )
@@ -96,7 +168,7 @@ function App() {
         <Route path='/cart'>
           {
             user ? (
-              <Cart />
+              <Cart orders={items} deleteOrder={deleteOrder} orderUp={orderUp} changeOrder={updateOrder} />
             ) : (
               <Login setUser={setUser} />
             )

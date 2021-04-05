@@ -8,7 +8,9 @@ export interface User {
 
 export interface Cart {
     id: number,
+    adress: string
     user: User,
+    phone: string,
     items: Order[]
 }
 export interface ProductCategory {
@@ -27,5 +29,5 @@ export interface Product {
 export interface Order {
     ammount: number,
     product: Product,
-    cart: Cart
+    cart?: Cart
 }

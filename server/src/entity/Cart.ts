@@ -17,6 +17,12 @@ export default class Cart {
     @Column()
     executed: boolean
 
+    @Column()
+    adress: string
+
+    @Column()
+    phone: string
+
     @OneToMany(type => Order, o => o.cart, { eager: false })
     items: Order[]
 }
