@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import { Bar, BarChart, CartesianGrid, Label, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from 'recharts';
 import { Container, Form, Grid, Ref, Table } from 'semantic-ui-react';
 import { Cart, Product, ProductCategory } from '../model';
 axios.defaults.withCredentials = true;
@@ -135,12 +135,18 @@ export default function Admin(props: Props) {
                     <BarChart
 
                         className='whiteBackground'
-                        compact
+
                         width={1200}
                         height={500}
+                        margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5,
+                        }}
                         data={props.products.map(product => {
                             const res: any = {
-                                product: product.name
+                                name: product.name
                             }
                             let ammount = 0;
                             let totalPrice = 0;
@@ -161,16 +167,15 @@ export default function Admin(props: Props) {
 
                         })}
                     >
-                        <XAxis name='Product' dataKey="product" >
+                        <CartesianGrid strokeDasharray="1 1" />
+                        <XAxis dataKey="name" />
 
-                            <Label value='Products' offset={0} position="insideBottom" />
-                        </XAxis>
-                        <YAxis label={{ value: '', angle: -90, position: 'insideLeft', fontSize: 14 }} minTickGap={1} />
+                        <YAxis />
                         <Tooltip />
+                        <Legend />
 
-                        <CartesianGrid strokeDasharray="1 1" stroke="#f5f5f5" />
-                        <Bar name='Ammount ordered' dataKey="ammount" fill="blue" />
-                        <Bar name='% in cart price' dataKey="total" fill="#83ca9d" />
+                        <Bar name='Total ordered ammount' dataKey="ammount" fill="blue" />
+                        <Bar name='Average share in cart' dataKey="total" fill="#83ca9d" />
                     </BarChart>
                 </Grid.Row>
             </Grid>
