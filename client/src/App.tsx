@@ -8,17 +8,19 @@ import Register from './pages/Register';
 import ProductPage from './pages/Product';
 import Products from './pages/Products';
 import Admin from './pages/Admin';
-import Cart from './pages/Cart';
-import { Order, Product, ProductCategory, User } from './model';
+import CartPage from './pages/Cart';
+import { Cart, Order, Product, ProductCategory, User } from './model';
 import Loading from './components/Loading';
 import axios from 'axios'
 import { SERVER_URL } from './constants';
+import Orders from './pages/Orders';
 axios.defaults.withCredentials = true;
 function App() {
 
   const [user, setUser] = useState<User | undefined>(undefined);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [carts, setCarts] = useState<Cart[]>([])
   const [items, setItems] = useState<Order[]>([])
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const getProduct = (id: number) => {
@@ -102,6 +104,10 @@ function App() {
         const resCat = await axios.get(SERVER_URL + '/category');
         setCategories(resCat.data);
 
+        const cartsRes = await axios.get(SERVER_URL + '/cart')
+        setCarts(cartsRes.data);
+
+
       } catch (error) {
         console.log(error.response);
       }
@@ -159,7 +165,16 @@ function App() {
         <Route path='/admin'>
           {
             user ? (
-              <Admin products={products} createProduct={createProduct} updateProduct={updateProduct} categories={categories} />
+              <Admin carts={carts} products={products} createProduct={createProduct} updateProduct={updateProduct} categories={categories} />
+            ) : (
+              <Login setUser={setUser} />
+            )
+          }
+        </Route>
+        <Route path='/orders'>
+          {
+            user ? (
+              <Orders carts={carts} />
             ) : (
               <Login setUser={setUser} />
             )
@@ -168,7 +183,7 @@ function App() {
         <Route path='/cart'>
           {
             user ? (
-              <Cart orders={items} deleteOrder={deleteOrder} orderUp={orderUp} changeOrder={updateOrder} />
+              <CartPage orders={items} deleteOrder={deleteOrder} orderUp={orderUp} changeOrder={updateOrder} />
             ) : (
               <Login setUser={setUser} />
             )

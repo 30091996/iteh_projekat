@@ -3,6 +3,7 @@ import { GenericController } from "./controller/GenericController";
 import ProductCategoryController from "./controller/ProductCategoryController";
 import ProductController from "./controller/ProductController";
 import UserController from "./controller/UserController";
+import WeatherController from "./controller/WeatherController";
 export interface Route {
     method: 'get' | 'post' | 'patch' | 'delete',
     route: string,
@@ -59,6 +60,11 @@ export const Routes: Route[] = [{
     controller: CartController,
     method: 'get',
     route: '/cart'
+}, {
+    method: "get",
+    route: "/weather",
+    controller: WeatherController,
+    action: "all"
 }
 
 ];

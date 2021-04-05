@@ -1,31 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Container, Form, Grid, Ref, Table } from 'semantic-ui-react'
-import { Cart, Product, ProductCategory } from '../model'
 import axios from 'axios';
-import { Bar, BarChart, CartesianGrid, Label, Pie, PieChart, Sector, Tooltip, XAxis, YAxis } from 'recharts';
-import { SERVER_URL } from '../constants';
+import React, { useEffect, useRef, useState } from 'react';
+import { Bar, BarChart, CartesianGrid, Label, Tooltip, XAxis, YAxis } from 'recharts';
+import { Container, Form, Grid, Ref, Table } from 'semantic-ui-react';
+import { Cart, Product, ProductCategory } from '../model';
 axios.defaults.withCredentials = true;
 interface Props {
     products: Product[],
     categories: ProductCategory[],
     updateProduct: (id: number, name: string, price: number, category: number, description: string) => Promise<any>
-    createProduct: (formData: FormData) => Promise<any>
+    createProduct: (formData: FormData) => Promise<any>,
+    carts: Cart[]
 }
 
 export default function Admin(props: Props) {
     const [selectedProductIndex, setselectedProductIndex] = useState(-1);
     const fileRef = useRef<HTMLDivElement>(null);
     const [price, setPrice] = useState(0);
-    const [carts, setCarts] = useState<Cart[]>([])
+
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [selectedCategoryID, setSelectedCategoryID] = useState(props.categories[0].id);
 
-    useEffect(() => {
-        axios.get(SERVER_URL + '/cart').then(res => {
-            setCarts(res.data);
-        })
-    })
+
 
     useEffect(() => {
 
@@ -149,7 +145,7 @@ export default function Admin(props: Props) {
                             let ammount = 0;
                             let totalPrice = 0;
 
-                            for (let cart of carts) {
+                            for (let cart of props.carts) {
                                 for (let item of cart.items) {
                                     totalPrice += item.ammount * item.product.price;
                                     if (item.product.id === product.id) {
