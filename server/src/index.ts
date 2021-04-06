@@ -38,6 +38,7 @@ createConnection().then(async connection => {
         }
 
     }))
+
     // register express routes from defined application routes
     app.post('/product', upload.single('file'), ProductController.create)
     Routes.forEach(route => {

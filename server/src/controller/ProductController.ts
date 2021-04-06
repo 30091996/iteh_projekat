@@ -64,7 +64,7 @@ export class ProductController implements GenericController {
             response.sendStatus(400);
             return;
         }
-        const existing = await productRepository.findOne(id);
+        const existing = await productRepository.findOne(id)
         if (!existing) {
             response.sendStatus(404);
             return;

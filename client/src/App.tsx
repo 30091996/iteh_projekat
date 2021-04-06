@@ -23,6 +23,7 @@ function App() {
   const [carts, setCarts] = useState<Cart[]>([])
   const [items, setItems] = useState<Order[]>([])
   const [categories, setCategories] = useState<ProductCategory[]>([]);
+
   const getProduct = (id: number) => {
     return products.find(element => element.id === id);
   }
@@ -164,7 +165,7 @@ function App() {
         </Route>
         <Route path='/admin'>
           {
-            user ? (
+            (user && user.category === 'admin') ? (
               <Admin carts={carts} products={products} createProduct={createProduct} updateProduct={updateProduct} categories={categories} />
             ) : (
               <Login setUser={setUser} />
@@ -173,7 +174,7 @@ function App() {
         </Route>
         <Route path='/orders'>
           {
-            user ? (
+            (user && user.category === 'admin') ? (
               <Orders carts={carts} />
             ) : (
               <Login setUser={setUser} />
